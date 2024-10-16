@@ -1,11 +1,24 @@
 package com.example.doctora.Model;
+import com.google.gson.annotations.SerializedName;
+
 public class DoctorDetailsModel {
+
+    @SerializedName("Doctor_Name")
     private String doctorName;
-    private String doctorEmail;
-    private String doctorPhone;
+
+    @SerializedName("Doctor_Specialty")
+    private String doctorSpecialty;
+
+    @SerializedName("Doctor_Experiences")
+    private String doctorExperiences;
+
+    @SerializedName("Doctor_Location")
+    private String doctorLocation;
+
+    @SerializedName("Doctor_Photo")
     private String doctorPhoto;
 
-    // Getters and setters
+    // Getters and setters for each field
     public String getDoctorName() {
         return doctorName;
     }
@@ -14,20 +27,28 @@ public class DoctorDetailsModel {
         this.doctorName = doctorName;
     }
 
-    public String getDoctorEmail() {
-        return doctorEmail;
+    public String getDoctorSpecialty() {
+        return doctorSpecialty;
     }
 
-    public void setDoctorEmail(String doctorEmail) {
-        this.doctorEmail = doctorEmail;
+    public void setDoctorSpecialty(String doctorSpecialty) {
+        this.doctorSpecialty = doctorSpecialty;
     }
 
-    public String getDoctorPhone() {
-        return doctorPhone;
+    public String getDoctorExperiences() {
+        return doctorExperiences;
     }
 
-    public void setDoctorPhone(String doctorPhone) {
-        this.doctorPhone = doctorPhone;
+    public void setDoctorExperiences(String doctorExperiences) {
+        this.doctorExperiences = doctorExperiences;
+    }
+
+    public String getDoctorLocation() {
+        return doctorLocation;
+    }
+
+    public void setDoctorLocation(String doctorLocation) {
+        this.doctorLocation = doctorLocation;
     }
 
     public String getDoctorPhoto() {

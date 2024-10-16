@@ -1,7 +1,10 @@
 package com.example.doctora.Utils;
 
+import com.example.doctora.Model.Appointment;
 import com.example.doctora.Model.DoctorDetailsModel;
 import com.example.doctora.Model.LoginResponse_Model;
+
+import java.util.List;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -36,6 +39,7 @@ public interface ApiService {
 
     @GET("Doctor_Profile_Api.php")
     Call<DoctorDetailsModel> getDoctorDetails(@Query("doctor_name") String doctorName);
-
+    @GET("Doctor_Appointment_fetch_Api.php")
+    Call<List<Appointment>> getAppointments(@Query("doctor_id") int doctorId);
 
 }
