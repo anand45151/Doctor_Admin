@@ -37,7 +37,6 @@ public class DashBoardActivity extends AppCompatActivity {
         });
     }
 
-    // Helper method to replace the current fragment
     private void loadFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame, fragment);

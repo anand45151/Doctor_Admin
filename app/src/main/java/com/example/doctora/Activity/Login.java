@@ -34,6 +34,17 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Check if user is already logged in
+        SharedPreferences sharedPreferences = getSharedPreferences("DoctorPrefs", MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("IsLoggedIn", false);
+        if (isLoggedIn) {
+            // User is already logged in, redirect to Dashboard
+            Intent intent = new Intent(Login.this, DashBoardActivity.class);
+            startActivity(intent);
+            finish(); // Close Login activity
+            return; // Exit onCreate
+        }
+
         // Find views by ID
         SignInBtn = findViewById(R.id.SignInBtn);
         signUpTXT = findViewById(R.id.signUpTXT);
@@ -47,8 +58,6 @@ public class Login extends AppCompatActivity {
             public void onClick(View view) {
                 String doctorId = doctorIdEdt.getText().toString();
                 String doctorName = doctorNameEdt.getText().toString();
-
-
 
                 if (!doctorId.isEmpty() && !doctorName.isEmpty()) {
                     loginDoctor(doctorId, doctorName);
@@ -69,10 +78,9 @@ public class Login extends AppCompatActivity {
         forgotPasswordTXT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Forgot password action
             }
         });
-
-
     }
 
     private void loginDoctor(String doctorId, String doctorName) {
@@ -82,10 +90,6 @@ public class Login extends AppCompatActivity {
         call.enqueue(new Callback<LoginResponse_Model>() {
             @Override
             public void onResponse(Call<LoginResponse_Model> call, Response<LoginResponse_Model> response) {
-                Log.d("API Response Code", String.valueOf(response.code()));
-                Log.d("API Response Body", String.valueOf(response.body()));
-                Log.d("API Error Body", String.valueOf(response.errorBody()));
-
                 if (response.isSuccessful() && response.body() != null) {
                     LoginResponse_Model loginResponse_model = response.body();
                     if (loginResponse_model.getStatus().equals("success")) {
@@ -95,8 +99,13 @@ public class Login extends AppCompatActivity {
 
                         Toast.makeText(Login.this, "Login Successful!", Toast.LENGTH_SHORT).show();
 
+                        // Save login status
+                        saveLoginStatusToSharedPreferences(true);
+
+                        // Redirect to Dashboard
                         Intent intent = new Intent(Login.this, DashBoardActivity.class);
                         startActivity(intent);
+                        finish(); // Close Login activity
                     } else {
                         Toast.makeText(Login.this, loginResponse_model.getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -107,7 +116,6 @@ public class Login extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<LoginResponse_Model> call, Throwable t) {
-                Log.e("LoginError", "Error: " + t.getMessage());
                 Toast.makeText(Login.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -122,7 +130,6 @@ public class Login extends AppCompatActivity {
             public void onResponse(Call<DoctorDetailsModel> call, Response<DoctorDetailsModel> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     DoctorDetailsModel doctorDetails = response.body();
-                     doctorDetails = response.body();
                     Log.d("DoctorDetails", "Received: " + doctorDetails.toString());
                     saveDoctorDetailsToSharedPreferences(doctorDetails);
                 } else {
@@ -145,15 +152,7 @@ public class Login extends AppCompatActivity {
         editor.putString("DoctorLocation", doctorDetails.getDoctorLocation());
         editor.putString("DoctorPhoto", doctorDetails.getDoctorPhoto());
         editor.apply();
-
-        Log.d("DoctorDetails", "Saved Specialty: " + doctorDetails.getDoctorSpecialty());
-        Log.d("DoctorDetails", "Saved Experiences: " + doctorDetails.getDoctorExperiences());
-        Log.d("DoctorDetails", "Saved Location: " + doctorDetails.getDoctorLocation());
-        Log.d("DoctorDetails", "Saved Photo URL: " + doctorDetails.getDoctorPhoto());
-
-
     }
-
 
     private void saveDoctorNameToSharedPreferences(String doctorName) {
         SharedPreferences sharedPreferences = getSharedPreferences("DoctorPrefs", MODE_PRIVATE);
@@ -162,5 +161,10 @@ public class Login extends AppCompatActivity {
         editor.apply();
     }
 
-
+    private void saveLoginStatusToSharedPreferences(boolean isLoggedIn) {
+        SharedPreferences sharedPreferences = getSharedPreferences("DoctorPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("IsLoggedIn", isLoggedIn);
+        editor.apply();
+    }
 }

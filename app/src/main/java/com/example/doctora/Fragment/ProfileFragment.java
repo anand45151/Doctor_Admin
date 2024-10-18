@@ -1,5 +1,6 @@
 package com.example.doctora.Fragment;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -9,10 +10,12 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.doctora.Activity.Login;
 import com.example.doctora.R;
 import com.squareup.picasso.Picasso;
 
@@ -24,6 +27,7 @@ public class ProfileFragment extends Fragment {
     private TextView doctorExperiences;
     private TextView doctorLocation;
     ProgressBar progressBar;
+    private Button logoutbtn;
 
     public ProfileFragment() {
     }
@@ -38,6 +42,7 @@ public class ProfileFragment extends Fragment {
         doctorSpecialty = view.findViewById(R.id.Doctor_Specialty);
         doctorExperiences = view.findViewById(R.id.Doctor_Experiences);
         doctorLocation = view.findViewById(R.id.Doctor_Location);
+        logoutbtn = view.findViewById(R.id.logoutbtn);
         progressBar = view.findViewById(R.id.progressBar);
         loadDoctorDetails();
 
@@ -52,7 +57,7 @@ public class ProfileFragment extends Fragment {
         String doctorSpecialtyValue = sharedPreferences.getString("DoctorSpecialty", "Default Specialty");
         String doctorExperiencesValue = sharedPreferences.getString("DoctorExperiences", "Default Experience");
         String doctorLocationValue = sharedPreferences.getString("DoctorLocation", "Default Location");
-        String doctorPhotoFilename = sharedPreferences.getString("DoctorPhoto", "default_image.png"); // Get the filename from SharedPreferences
+        String doctorPhotoFilename = sharedPreferences.getString("DoctorPhoto", "default_image.png");
         String doctorPhotoUrl = "http://192.168.0.103/Doctor_G_Main_WebSite/uploads/" + doctorPhotoFilename;
         doctorName.setText(doctorNameValue);
         doctorSpecialty.setText(doctorSpecialtyValue);
@@ -65,6 +70,19 @@ public class ProfileFragment extends Fragment {
                 .error(R.drawable.patient)
                 .into(doctorPhoto);
         progressBar.setVisibility(View.GONE);
+
+    logoutbtn.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+            editor.apply();
+            Intent intent = new Intent(getActivity(), Login.class);
+            startActivity(intent);
+            getActivity().finish();
+        }
+    });
     }
+
 
 }

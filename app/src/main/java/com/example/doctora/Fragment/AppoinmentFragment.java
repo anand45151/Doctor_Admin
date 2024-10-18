@@ -46,7 +46,7 @@ public class AppoinmentFragment extends Fragment {
     }
 
     private void fetchAppointments() {
-        int doctorId = 32;
+        int doctorId = 10;
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://192.168.0.103/androidapi/Doctor_Appointment_fetch_Api.php/")
                 .addConverterFactory(GsonConverterFactory.create())
