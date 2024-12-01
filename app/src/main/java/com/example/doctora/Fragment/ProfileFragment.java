@@ -1,5 +1,6 @@
 package com.example.doctora.Fragment;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.doctora.Activity.Login;
+import com.example.doctora.ApiConstant;
 import com.example.doctora.R;
 import com.squareup.picasso.Picasso;
 
@@ -25,11 +27,12 @@ public class ProfileFragment extends Fragment {
     private TextView doctorName;
     private TextView doctorSpecialty;
     private TextView doctorExperiences;
-    private TextView doctorLocation;
-    ProgressBar progressBar;
+    private TextView doctorLocation, doctorID;
+    private ProgressBar progressBar;
     private Button logoutbtn;
 
     public ProfileFragment() {
+        // Required empty public constructor
     }
 
     @Override
@@ -44,6 +47,7 @@ public class ProfileFragment extends Fragment {
         doctorLocation = view.findViewById(R.id.Doctor_Location);
         logoutbtn = view.findViewById(R.id.logoutbtn);
         progressBar = view.findViewById(R.id.progressBar);
+        doctorID = view.findViewById(R.id.doctorid);
         loadDoctorDetails();
 
         return view;
@@ -53,36 +57,65 @@ public class ProfileFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("DoctorPrefs", getActivity().MODE_PRIVATE);
+        String doctorIDValue = sharedPreferences.getString("DoctorID", "default");
         String doctorNameValue = sharedPreferences.getString("DoctorName", "Default Name");
         String doctorSpecialtyValue = sharedPreferences.getString("DoctorSpecialty", "Default Specialty");
-        String doctorExperiencesValue = sharedPreferences.getString("DoctorExperiences", "Default Experience");
+        String doctorExperiencesValue = sharedPreferences.getString("DoctorExperience", "Default Experience");
         String doctorLocationValue = sharedPreferences.getString("DoctorLocation", "Default Location");
         String doctorPhotoFilename = sharedPreferences.getString("DoctorPhoto", "default_image.png");
-        String doctorPhotoUrl = "http://192.168.0.103/Doctor_G_Main_WebSite/uploads/" + doctorPhotoFilename;
+        String doctorPhotoUrl = ApiConstant.PHOTO_URL + doctorPhotoFilename;
+
+        // Set text for doctor details
+        doctorID.setText(doctorIDValue);
         doctorName.setText(doctorNameValue);
         doctorSpecialty.setText(doctorSpecialtyValue);
         doctorExperiences.setText(doctorExperiencesValue);
         doctorLocation.setText(doctorLocationValue);
 
+        // Load doctor photo with Picasso
         Picasso.get()
                 .load(doctorPhotoUrl)
                 .placeholder(R.drawable.doctor)
                 .error(R.drawable.patient)
                 .into(doctorPhoto);
+
+        // Fade in the doctor details
+        ObjectAnimator fadeInName = ObjectAnimator.ofFloat(doctorName, "alpha", 0f, 1f);
+        fadeInName.setDuration(500); // 500ms for fade in
+        fadeInName.start();
+
+        ObjectAnimator fadeInSpecialty = ObjectAnimator.ofFloat(doctorSpecialty, "alpha", 0f, 1f);
+        fadeInSpecialty.setDuration(500);
+        fadeInSpecialty.start();
+
+        ObjectAnimator fadeInExperiences = ObjectAnimator.ofFloat(doctorExperiences, "alpha", 0f, 1f);
+        fadeInExperiences.setDuration(500);
+        fadeInExperiences.start();
+
+        ObjectAnimator fadeInLocation = ObjectAnimator.ofFloat(doctorLocation, "alpha", 0f, 1f);
+        fadeInLocation.setDuration(500);
+        fadeInLocation.start();
+
+        // Set visibility for text views to visible after loading
+        doctorName.setVisibility(View.VISIBLE);
+        doctorSpecialty.setVisibility(View.VISIBLE);
+        doctorExperiences.setVisibility(View.VISIBLE);
+        doctorLocation.setVisibility(View.VISIBLE);
+
+        // Hide the progress bar
         progressBar.setVisibility(View.GONE);
 
-    logoutbtn.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.clear();
-            editor.apply();
-            Intent intent = new Intent(getActivity(), Login.class);
-            startActivity(intent);
-            getActivity().finish();
-        }
-    });
+        // Logout button functionality
+        logoutbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.apply();
+                Intent intent = new Intent(getActivity(), Login.class);
+                startActivity(intent);
+                getActivity().finish();
+            }
+        });
     }
-
-
 }

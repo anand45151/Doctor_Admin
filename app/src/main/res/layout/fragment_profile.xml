@@ -146,6 +146,7 @@
                     android:textSize="16sp" />
 
                 <TextView
+                    android:id="@+id/doctorid"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Change"
@@ -220,16 +221,6 @@
             </LinearLayout>
 
         </LinearLayout>
-
-        <Button
-            android:id="@+id/action_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:backgroundTint="#1976D2"
-            android:paddingVertical="12dp"
-            android:text="BUTTON"
-            android:textColor="#fff" />
 
 
         <Button

@@ -19,7 +19,7 @@ import java.util.List;
 
 public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.HospitalViewHolder> {
     private List<Hospital> hospitalList;
-    private Context context; // Added context to launch the activity
+    private Context context;
 
     public HospitalAdapter(List<Hospital> hospitalList, Context context) {
         this.hospitalList = hospitalList;
@@ -42,6 +42,17 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.Hospit
         holder.hospitalContact.setText(hospital.getContactNumber());
         holder.hospitalImage.setImageResource(hospital.getImageResourceId());
 
+        // Set initial scale
+        holder.itemView.setScaleX(0.5f);
+        holder.itemView.setScaleY(0.5f);
+
+        // Scale animation
+        holder.itemView.animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(300)
+                .setListener(null);
+
         // Handle click event to open HospitalDetailsActivity
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, HospitalDetailsActivity.class);
@@ -49,7 +60,7 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.Hospit
             intent.putExtra("hospital_address", hospital.getAddress());
             intent.putExtra("hospital_contact", hospital.getContactNumber());
             intent.putExtra("hospital_image", hospital.getImageResourceId());
-            intent.putExtra("hospital_description", hospital.getDescription()); // Pass the description
+            intent.putExtra("hospital_description", hospital.getDescription());
             context.startActivity(intent);
         });
     }

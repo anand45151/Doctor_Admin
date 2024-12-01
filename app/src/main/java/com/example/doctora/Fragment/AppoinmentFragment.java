@@ -1,9 +1,13 @@
 package com.example.doctora.Fragment;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +19,7 @@ import com.example.doctora.Utils.ApiService;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,32 +51,44 @@ public class AppoinmentFragment extends Fragment {
     }
 
     private void fetchAppointments() {
-        int doctorId = 10;
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.0.103/androidapi/Doctor_Appointment_fetch_Api.php/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("DoctorPrefs", Context.MODE_PRIVATE);
+        String doctorIdString = sharedPreferences.getString("DoctorID", null);
 
+        if (doctorIdString == null) {
+            Log.e("AppointmentFragment", "Doctor ID not found in SharedPreferences.");
+            return;
+        }
 
-        ApiService apiInterface = retrofit.create(ApiService.class);
-        Call<List<Appointment>> call = apiInterface.getAppointments(doctorId);
+        try {
+            int doctorId = Integer.parseInt(doctorIdString); // Convert String to int
 
-        call.enqueue(new Callback<List<Appointment>>() {
-            @Override
-            public void onResponse(Call<List<Appointment>> call, Response<List<Appointment>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Appointment> appointmentList = response.body();
-                    appointmentAdapter = new AppointmentAdapter(getContext(), appointmentList);
-                    recyclerView.setAdapter(appointmentAdapter);
-                } else {
-                    Log.e("API Error", "Error fetching appointments: " + response.message());
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("http://192.168.190.104/androidapi/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            ApiService apiInterface = retrofit.create(ApiService.class);
+            Call<List<Appointment>> call = apiInterface.getAppointments(doctorId);
+
+            call.enqueue(new Callback<List<Appointment>>() {
+                @Override
+                public void onResponse(Call<List<Appointment>> call, Response<List<Appointment>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        List<Appointment> appointmentList = response.body();
+                        appointmentAdapter = new AppointmentAdapter(getContext(), appointmentList);
+                        recyclerView.setAdapter(appointmentAdapter);
+                    } else {
+                        Log.e("API Error", "Error fetching appointments: " + response.message());
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<List<Appointment>> call, Throwable t) {
-                Log.e("API Error", "Error: " + t.getMessage());
-            }
-        });
+                @Override
+                public void onFailure(Call<List<Appointment>> call, Throwable t) {
+                    Log.e("API Error", "Error: " + t.getMessage());
+                }
+            });
+        } catch (NumberFormatException e) {
+            Log.e("AppointmentFragment", "Doctor ID is not a valid integer: " + doctorIdString, e);
+        }
     }
 }

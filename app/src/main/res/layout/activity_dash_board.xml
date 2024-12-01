@@ -19,7 +19,6 @@
         android:layout_alignParentBottom="true"
         android:id="@+id/bottomNavigation"
         app:menu="@menu/menuitem"
-        app:itemIconTint="#D046F8"
         android:fitsSystemWindows="true"
         app:itemTextColor="@color/black">
     </com.google.android.material.bottomnavigation.BottomNavigationView>

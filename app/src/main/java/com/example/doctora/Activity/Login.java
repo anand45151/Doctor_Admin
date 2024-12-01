@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.doctora.Model.DoctorDetailsModel;
 import com.example.doctora.Model.LoginResponse_Model;
 import com.example.doctora.R;
 import com.example.doctora.Utils.ApiClient;
@@ -93,9 +92,8 @@ public class Login extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     LoginResponse_Model loginResponse_model = response.body();
                     if (loginResponse_model.getStatus().equals("success")) {
-                        String doctorname = loginResponse_model.getDoctor().getName();
-                        saveDoctorNameToSharedPreferences(doctorname);
-                        fetchDoctorDetails(doctorname); // Fetch doctor details after login success
+                        LoginResponse_Model.Doctor doctor = loginResponse_model.getDoctor();
+                        saveDoctorDetailsToSharedPreferences(doctor);
 
                         Toast.makeText(Login.this, "Login Successful!", Toast.LENGTH_SHORT).show();
 
@@ -121,43 +119,16 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    private void fetchDoctorDetails(String doctorName) {
-        ApiService apiService = ApiClient.getInstance().getApiService();
-        Call<DoctorDetailsModel> call = apiService.getDoctorDetails(doctorName);
-
-        call.enqueue(new Callback<DoctorDetailsModel>() {
-            @Override
-            public void onResponse(Call<DoctorDetailsModel> call, Response<DoctorDetailsModel> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    DoctorDetailsModel doctorDetails = response.body();
-                    Log.d("DoctorDetails", "Received: " + doctorDetails.toString());
-                    saveDoctorDetailsToSharedPreferences(doctorDetails);
-                } else {
-                    Toast.makeText(Login.this, "Failed to fetch doctor details", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<DoctorDetailsModel> call, Throwable t) {
-                Toast.makeText(Login.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void saveDoctorDetailsToSharedPreferences(DoctorDetailsModel doctorDetails) {
+    private void saveDoctorDetailsToSharedPreferences(LoginResponse_Model.Doctor doctor) {
         SharedPreferences sharedPreferences = getSharedPreferences("DoctorPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("DoctorSpecialty", doctorDetails.getDoctorSpecialty());
-        editor.putString("DoctorExperiences", doctorDetails.getDoctorExperiences());
-        editor.putString("DoctorLocation", doctorDetails.getDoctorLocation());
-        editor.putString("DoctorPhoto", doctorDetails.getDoctorPhoto());
-        editor.apply();
-    }
 
-    private void saveDoctorNameToSharedPreferences(String doctorName) {
-        SharedPreferences sharedPreferences = getSharedPreferences("DoctorPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("DoctorName", doctorName);
+        editor.putString("DoctorID", doctor.getId());
+        editor.putString("DoctorName", doctor.getName());
+        editor.putString("DoctorSpecialty", doctor.getSpecialty());
+        editor.putString("DoctorExperience", doctor.getExperience());
+        editor.putString("DoctorLocation", doctor.getLocation());
+        editor.putString("DoctorPhoto", doctor.getPhoto());
         editor.apply();
     }
 

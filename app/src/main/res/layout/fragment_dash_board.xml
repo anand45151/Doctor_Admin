@@ -36,14 +36,15 @@
 
         </LinearLayout>
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/doctor_Image"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:contentDescription="Profile Icon"
             android:src="@drawable/profileicon" />
-        >
+
 
         <LinearLayout
             android:id="@+id/homeSearch"

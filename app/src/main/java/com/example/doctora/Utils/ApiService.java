@@ -39,7 +39,10 @@ public interface ApiService {
 
     @GET("Doctor_Profile_Api.php")
     Call<DoctorDetailsModel> getDoctorDetails(@Query("doctor_name") String doctorName);
+
+
     @GET("Doctor_Appointment_fetch_Api.php")
     Call<List<Appointment>> getAppointments(@Query("doctor_id") int doctorId);
+
 
 }
